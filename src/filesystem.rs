@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 use std::{fs, io};
 
 /// A cached filesytem manager.
-pub struct Fsm {
+pub struct FilesystemManager {
     /// Absolute path to current directory (cached).
     cwd: Option<PathBuf>,
 
@@ -11,7 +11,7 @@ pub struct Fsm {
     absolute_lake_root: Option<PathBuf>,
 }
 
-impl Fsm {
+impl FilesystemManager {
     pub fn new() -> Self {
         Self { cwd: None, absolute_lake_root: None }
     }

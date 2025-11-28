@@ -6,7 +6,7 @@ mod fmt;
 mod lean;
 
 use error::*;
-use filesystem::Fsm;
+use filesystem::FilesystemManager;
 use lean::Lean;
 
 use std::collections::HashMap;
@@ -25,7 +25,7 @@ fn split_first_utf8_char(x: &str) -> (&str, &str) {
     }
 }
 
-fn _main(mut fsm: Fsm) -> Result<()> {
+fn _main(mut fsm: FilesystemManager) -> Result<()> {
     use cli::{Subcommand as S, *};
 
     let _t = Instant::now();
@@ -251,7 +251,7 @@ fn _main(mut fsm: Fsm) -> Result<()> {
 }
 
 fn main() -> ExitCode {
-    let fsm = Fsm::new();
+    let fsm = FilesystemManager::new();
     if let Err(err) = _main(fsm) {
         println!("{err}");
         return ExitCode::FAILURE;
