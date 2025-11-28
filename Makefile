@@ -1,14 +1,14 @@
 MAKEFILE_PATH   := $(abspath $(lastword $(MAKEFILE_LIST)))
 MAKEFILE_DIR    := $(dir $(MAKEFILE_PATH))
 
-LEAN_DIR        := $(MAKEFILE_DIR)..
+LEAN_DIR        := /home/khang/repos/math
 CARGO_DEBUG_DIR := $(MAKEFILE_DIR)target/debug
 
 CARGO_INSTALL := cargo install --locked --all-features --force
 
 BIN_NAME := slope
 
-current: search
+current: rg
 
 build:
 	cargo build

@@ -1,13 +1,14 @@
 use core::fmt;
 use std::path::PathBuf;
 
+/// Represents one `*.lean` file.
 #[derive(PartialEq, Eq)]
 pub struct Lean {
-    /// The absolute path to the directory where the `path` can bring us the
-    /// rest of the way.
+    /// The absolute path to the directory where the `relpath` can bring us the
+    /// rest of the way to the `*.lean` file in question.
     root: PathBuf,
 
-    /// The import path of the Lean file, relative to the root.
+    /// The import path of the Lean file, relative to `root`.
     relpath: PathBuf,
 }
 
@@ -25,7 +26,6 @@ impl Lean {
     /// Get the corresponding `import` string of this file. Really, it's just
     /// converting all '/' to '.', and then stripping the ".lean" suffix.
     pub fn import(&self) -> String {
-        // self.relpath.to_str().unwrap().replace('/', ".")
         let components: Vec<_> = self
             .relpath
             .components()
