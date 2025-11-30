@@ -66,6 +66,8 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
             for lean_file in lean_files {
                 writeln!(f, "import {}", lean_file.import())?;
             }
+            writeln!(f, "set_option linter.style.longLine false")?;
+            writeln!(f)?;
             writeln!(f, "-- WARNING: THIS FILE IS AUTO-GENERATED.")?;
         }
         S::Check(Check {}) => {
