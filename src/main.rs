@@ -38,7 +38,7 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
             let lean_files = filesystem::get_lean_files_in_dir(
                 &lake_root,
                 &[".git", ".github", ".lake", "target"],
-            )?;
+            );
             // Convert these into `Vec<Lean>`
             let mut lean_files: Vec<_> = lean_files
                 .iter()
@@ -77,7 +77,7 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
             let lean_files = filesystem::get_lean_files_in_dir(
                 &lake_root,
                 &[".git", ".github", ".lake", "target"],
-            )?;
+            );
 
             let mut text = String::with_capacity(2048);
             for lean_file in &lean_files {
@@ -106,7 +106,7 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
             let lean_files = filesystem::get_lean_files_in_dir(
                 &lake_root,
                 &[".git", ".github", ".lake", "target"],
-            )?;
+            );
             // Convert these into `Vec<Lean>`
             let mut lean_files: Vec<_> = lean_files
                 .iter()
@@ -142,7 +142,7 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
             let lean_files = filesystem::get_lean_files_in_dir(
                 &cwd,
                 &[".git", ".github", ".lake", "target"],
-            )?;
+            );
 
             let mut buffer = String::with_capacity(2048);
             for lean_file in lean_files {
@@ -164,7 +164,7 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
             let mathlib_lean_files = filesystem::get_lean_files_in_dir(
                 &mathlib_dir.join("Mathlib"),
                 &[],
-            )?;
+            );
             let mathlib_lean_files: Vec<_> = mathlib_lean_files
                 .iter()
                 .filter_map(|v| v.strip_prefix(&mathlib_dir).ok())
@@ -195,7 +195,7 @@ fn _main(mut fsm: FilesystemManager) -> Result<()> {
         }
         S::Search(_) => {
             let cwd = fsm.cwd();
-            let lean_files = filesystem::get_lean_files_in_dir(&cwd, &[])?;
+            let lean_files = filesystem::get_lean_files_in_dir(&cwd, &[]);
 
             let mut raw_buffer = String::new();
             let mut text_buffer = String::new();

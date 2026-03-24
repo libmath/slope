@@ -1,5 +1,5 @@
+use std::fs;
 use std::path::{Path, PathBuf};
-use std::{fs, io};
 
 #[allow(unused)]
 fn is_lakefile(filepath: &Path) -> bool {
@@ -64,62 +64,40 @@ impl FilesystemManager {
     }
 }
 
-/// Recursively walks through the contents of a directory. Ignores a
-/// fixed set of directories.
-pub fn walk<F>(
-    root: &Path,
-    mut action: F,
-    ignore_dirs: &[&str],
-) -> io::Result<()>
-where
-    F: FnMut(PathBuf) -> (),
-{
-    let mut stack = vec![];
-    for dir_ent in fs::read_dir(root)? {
-        stack.push(dir_ent?);
-    }
-    loop {
-        let Some(dir_ent) = stack.pop() else { return Ok(()) };
-        let ft = dir_ent.file_type()?;
-
-        if ft.is_dir() {
-            let dir = dir_ent.path();
-            let Some(filename) = dir.file_name().and_then(|v| v.to_str())
-            else {
-                continue;
-            };
-            if ignore_dirs.contains(&filename) {
-                continue;
-            }
-            for dir_ent in fs::read_dir(dir)? {
-                stack.push(dir_ent?);
-            }
-        } else if ft.is_file() {
-            action(dir_ent.path());
-        }
-    }
-}
-
 /// Recursively obtains all the files with extension "lean" under `root`, while
 /// ignoring directories that are contained in `ignore_dirs`. Also, ignores
-/// "lakefile.lean".
+/// "lakefile.lean", and ignores symlinks.
 pub fn get_lean_files_in_dir(
     root: &Path,
     ignore_dirs: &[&str],
-) -> io::Result<Vec<PathBuf>> {
+) -> Vec<PathBuf> {
     let mut lean_files = vec![];
-    walk(
-        root,
-        |file| {
-            let Some(file_stem) = file.file_stem() else { return };
-            if file_stem == "lakefile" {
-                return;
-            }
-            if file.extension().map_or(false, |v| v == "lean") {
-                lean_files.push(file)
-            }
-        },
-        ignore_dirs,
-    )?;
-    Ok(lean_files)
+    let it = walkdir::WalkDir::new(root);
+    let it = it.into_iter().filter_entry(|entry| {
+        let file_name = entry.file_name();
+        !ignore_dirs.iter().any(|&v| v == file_name)
+    });
+    for entry in it {
+        let Ok(entry) = entry else { continue };
+        let path = entry.path();
+
+        // Skip "lakefile.lean" and "lakefile.toml".
+        let Some(file_stem) = path.file_stem() else { continue };
+        if file_stem == "lakefile" {
+            continue;
+        }
+
+        // Keep only files that are "*.lean".
+        let Some(extension) = path.extension() else { continue };
+        if extension != "lean" {
+            continue;
+        }
+
+        if entry.path_is_symlink() {
+            continue;
+        }
+
+        lean_files.push(entry.into_path())
+    }
+    lean_files
 }
